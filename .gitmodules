@@ -1,0 +1,3 @@
+[submodule "qconv-strip-vhdl"]
+	path = qconv-strip-vhdl
+	url = https://github.com/ikwzm/qconv-strip-vhdl.git
