@@ -171,7 +171,7 @@ shell$ cd QCONV-STRIP-Ultra96
 shell$ git submodule update --init --recursive
 ```
 
-### Build qconv_strip_axi3.bin
+### Build qconv_strip_axi.bin
 
 #### Download QCONV-STRIP-Ultra96
 
