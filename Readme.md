@@ -16,9 +16,26 @@ Quantized Convolution is a convolution method published by LeapMind Inc(https://
 
 See https://github.com/ikwzm/ZynqMP-FPGA-Linux
 
+### Boot ZynqMP-FPGA-Linux
+
+### Login fpga user
+
+### Download QCONV-STRIP-Ultra96 to Ultra96
+
+```console
+fpga@debian-fpga:~/$ git clone https://github.com/ikwzm/QCONV-STRIP-Ultra96.git
+fpga@debian-fpga:~/$ cd QCONV-STRIP-Ultra96
+```
+
+### Replace boot.bin for outer shareable
+
+```console
+fpga@debian-fpga:~/QCONV-STRIP-Ultra96$ sudo cp /mnt/boot/boot.bin /mnt/boot/boot.bin.org
+fpga@debian-fpga:~/QCONV-STRIP-Ultra96$ sudo cp boot/boot_outer_shareable.bin /mnt/boot/boot.bin
+```
 ### Expand the CMA area
 
-Add ```cma=256M``` to linux_boot_args in uEnv.txt.
+Add ```cma=256M``` to linux_boot_args in /mnt/boot/uEnv.txt
 
 ```
 linux_kernel_image=image-4.14.0-xlnx-v2018.2-zynqmp-fpga
@@ -35,15 +52,10 @@ uenvcmd=run linux_load_cmd && run linux_boot_cmd
 bootmenu_0=Boot Default=boot
 ```
 
-### Boot ZynqMP-FPGA-Linux
-
-### Login fpga user
-
-### Download QCONV-STRIP-Ultra96 to Ultra96
+### Reboot ZynqMP-FPGA-Linux
 
 ```console
-fpga@debian-fpga:~/$ git clone https://github.com/ikwzm/QCONV-STRIP-Ultra96.git
-fpga@debian-fpga:~/$ cd QCONV-STRIP-Ultra96
+fpga@debian-fpga:~/QCONV-STRIP-Ultra96$ sudo reboot
 ```
 
 ### Install FPGA Bitstream file
