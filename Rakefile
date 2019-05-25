@@ -11,7 +11,7 @@ UDMABUF_DEVICE_FILES   = ["udmabuf-qconv-in", "udmabuf-qconv-out", "udmabuf-qcon
 desc "Install fpga and devicetrees"
 task :install => ["/lib/firmware/#{FPGA_BITSTREAM_FILE}", DEVICE_TREE_FILE] do
   begin
-    sh "dtbocfg.rb --install #{DEVICE_TREE_NAME} --dts #{DEVICE_TREE_FILE}"
+    sh "./dtbocfg.rb --install #{DEVICE_TREE_NAME} --dts #{DEVICE_TREE_FILE}"
   rescue => e
     print "error raised:"
     p e
@@ -45,7 +45,7 @@ task :uninstall do
   if (Dir.exist?(DEVICE_TREE_DIRECTORY) == false)
     abort "can not #{DEVICE_TREE_DIRECTORY} uninstalled: does not already exists."
   end
-  sh "dtbocfg.rb --remove #{DEVICE_TREE_NAME}"
+  sh "./dtbocfg.rb --remove #{DEVICE_TREE_NAME}"
 end
 
 file "/lib/firmware/#{FPGA_BITSTREAM_FILE}" => ["#{FPGA_BITSTREAM_FILE}"] do
