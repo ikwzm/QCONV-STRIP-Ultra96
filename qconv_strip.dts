@@ -5,7 +5,7 @@
 		__overlay__ {
 			firmware-name = "qconv_strip_axi.bin";
 		};
-        }
+        };
 	fragment@1 {
 		target-path = "/amba_pl@0";
 		__overlay__ {
@@ -34,7 +34,7 @@
 
 			uio_qconv_strip {
 				compatible = "generic-uio";
-				reg = <0x0 0xA0010000 0x0 0x10000>;
+				reg = <0x0 0xA0001000 0x0 0x10000>;
 				interrupt-parent = <&gic>;
 				interrupts = <0 89 4>;
 	                };
