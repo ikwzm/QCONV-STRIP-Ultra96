@@ -29,8 +29,8 @@ proc init_gui { IPINST } {
   set OUT_DATA_PARAMETER [ipgui::add_group $IPINST -name "OUT DATA PARAMETER" -parent ${IO_AXI_I/F} -display_name {OUT AXI PARAMETER}]
   set_property tooltip {OUT AXI PARAMETER} ${OUT_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "O_AXI_ID" -parent ${OUT_DATA_PARAMETER}
-  ipgui::add_param $IPINST -name "O_AXI_CACHE" -parent ${OUT_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "O_AXI_PROT" -parent ${OUT_DATA_PARAMETER}
+  ipgui::add_param $IPINST -name "O_AXI_CACHE" -parent ${OUT_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "O_AXI_AUSER" -parent ${OUT_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "O_AXI_REQ_QUEUE" -parent ${OUT_DATA_PARAMETER}
 
@@ -48,8 +48,8 @@ proc init_gui { IPINST } {
   set K_DATA_PARAMETER [ipgui::add_group $IPINST -name "K DATA PARAMETER" -parent ${K_AXI_I/F} -display_name {K AXI PARAMETER}]
   set_property tooltip {K AXI PARAMETER} ${K_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "K_AXI_ID" -parent ${K_DATA_PARAMETER}
-  ipgui::add_param $IPINST -name "K_AXI_CACHE" -parent ${K_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "K_AXI_PROT" -parent ${K_DATA_PARAMETER}
+  ipgui::add_param $IPINST -name "K_AXI_CACHE" -parent ${K_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "K_AXI_AUSER" -parent ${K_DATA_PARAMETER}
   ipgui::add_param $IPINST -name "K_AXI_REQ_QUEUE" -parent ${K_DATA_PARAMETER}
 
@@ -66,9 +66,9 @@ proc init_gui { IPINST } {
   #Adding Group
   set T_AXI_PARAMETER [ipgui::add_group $IPINST -name "T AXI PARAMETER" -parent ${T_AXI_I/F}]
   ipgui::add_param $IPINST -name "T_AXI_ID" -parent ${T_AXI_PARAMETER}
+  ipgui::add_param $IPINST -name "T_AXI_PROT" -parent ${T_AXI_PARAMETER}
   ipgui::add_param $IPINST -name "T_AXI_CACHE" -parent ${T_AXI_PARAMETER}
   ipgui::add_param $IPINST -name "T_AXI_USER" -parent ${T_AXI_PARAMETER}
-  ipgui::add_param $IPINST -name "T_AXI_PROT" -parent ${T_AXI_PARAMETER}
   ipgui::add_param $IPINST -name "T_AXI_REQ_QUEUE" -parent ${T_AXI_PARAMETER}
 
 
