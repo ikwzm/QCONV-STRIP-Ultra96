@@ -232,10 +232,14 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.IO_AXI_DATA_WIDTH {128} \
    CONFIG.IO_AXI_ID_WIDTH {2} \
+   CONFIG.I_AXI_PROT {2} \
    CONFIG.K_AXI_DATA_WIDTH {128} \
    CONFIG.K_AXI_ID_WIDTH {2} \
+   CONFIG.K_AXI_PROT {2} \
+   CONFIG.O_AXI_PROT {2} \
    CONFIG.T_AXI_DATA_WIDTH {128} \
    CONFIG.T_AXI_ID_WIDTH {2} \
+   CONFIG.T_AXI_PROT {2} \
  ] $qconv_strip_axi_0
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
@@ -898,6 +902,7 @@ proc create_root_design { parentCell } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -909,6 +914,4 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
-
-common::send_msg_id "BD_TCL-1000" "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 
