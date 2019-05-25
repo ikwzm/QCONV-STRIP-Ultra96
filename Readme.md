@@ -90,8 +90,9 @@ Vivado > Tools > Run Tcl Script > project/implementation.tcl
 
 #### Convert from Bitstream File to Binary File
 
-```
-shell$ tools/fpga-bit-to-bin.py --flip project/project.runs/impl_1/design_1_wrapper.bit qconv_strip_axi3.bin
+```console
+vivado% cp project/project.runs/impl_1/design_1_wrapper.bit qconv_strip_axi.bit
+vivado% bootgen -image qconv_strip_axi.bif -arch zynqmp -w -o qconv_strip_axi.bin
 ```
 
 ## Licensing
