@@ -11,7 +11,7 @@
 		__overlay__ {
 			afi0 {
 				compatible    = "xlnx,afi-fpga";
-				config-afi    = <0 0>, <1 0>, <14 0x000>;
+				config-afi    = <0 0>, <1 0>, <14 0x200>;
 			};
 			fclk0 {
 				compatible    = "ikwzm,fclkcfg-0.10.a";
