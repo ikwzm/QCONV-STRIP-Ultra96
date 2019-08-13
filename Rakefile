@@ -5,8 +5,22 @@ FPGA_BITSTREAM_FILE    = "qconv_strip_axi.bin"
 DEVICE_TREE_FILE       = "qconv_strip.dts"
 DEVICE_TREE_NAME       = "qconv_strip"
 DEVICE_TREE_DIRECTORY  = "/config/device-tree/overlays/#{DEVICE_TREE_NAME}"
-UIO_DEVICE_NAME        = "uio1"
-UDMABUF_DEVICE_FILES   = ["udmabuf-qconv-in", "udmabuf-qconv-out", "udmabuf-qconv-k", "udmabuf-qconv-th"]
+UIO_DEVICE_NAMES       = ["uio_qconv_strip"]
+UDMABUF_DEVICE_NAMES   = ["udmabuf-qconv-in", "udmabuf-qconv-out", "udmabuf-qconv-k", "udmabuf-qconv-th"]
+
+def find_uio_device(name)
+  found_device_name = nil
+  Dir::entries("/sys/class/uio").map{ |device_name|
+    if device_name =~ /^uio/
+      File.open("/sys/class/uio/#{device_name}/name"){|file|
+        if name.eql?(file.gets.chop)
+          found_device_name = device_name
+        end
+      }
+    end
+  }
+  return found_device_name
+end
 
 desc "Install fpga and devicetrees"
 task :install => ["/lib/firmware/#{FPGA_BITSTREAM_FILE}", DEVICE_TREE_FILE] do
@@ -20,14 +34,21 @@ task :install => ["/lib/firmware/#{FPGA_BITSTREAM_FILE}", DEVICE_TREE_FILE] do
   if (Dir.exist?(DEVICE_TREE_DIRECTORY) == false)
     abort "can not #{DEVICE_TREE_DIRECTORY} installed."
   end
-  device_file = "/dev/" + UIO_DEVICE_NAME
-  if (File.exist?(device_file) == false)
-    abort "can not #{device_file} installed."
-  end
-  File::chmod(0666, device_file)
-  UDMABUF_DEVICE_FILES.each do |device_file|
+
+  UIO_DEVICE_NAMES.each do |device_name|
+    device_file = find_uio_device(device_name)
+    if (device_file.nil?)
+      abort "can not find uio device file named #{device_name}"
+    end
     if (File.exist?("/dev/" + device_file) == false)
-      abort "can not #{device_file} installed."
+      abort "can not /dev/#{device_file} installed."
+    end
+    File::chmod(0666, "/dev/" + device_file)
+  end    
+
+  UDMABUF_DEVICE_NAMES.each do |device_file|
+    if (File.exist?("/dev/" + device_file) == false)
+      abort "can not /dev/#{device_file} installed."
     end
     File::chmod(0666, "/dev/" + device_file)
     File::chmod(0666, "/sys/class/udmabuf/" + device_file + "/sync_mode")
@@ -46,6 +67,18 @@ task :uninstall do
     abort "can not #{DEVICE_TREE_DIRECTORY} uninstalled: does not already exists."
   end
   sh "./dtbocfg.rb --remove #{DEVICE_TREE_NAME}"
+end
+
+desc "Prepare device drivers"
+task :prepare do
+  begin
+    sh "./dtbocfg.rb --install prepare_drivers --dts prepare_drivers.dts"
+    sh "./dtbocfg.rb --remove  prepare_drivers"
+  rescue => e
+    print "error raised:"
+    p e
+    abort
+  end
 end
 
 file "/lib/firmware/#{FPGA_BITSTREAM_FILE}" => ["#{FPGA_BITSTREAM_FILE}"] do

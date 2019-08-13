@@ -38,9 +38,9 @@ fpga@debian-fpga:~/QCONV-STRIP-Ultra96$ sudo cp boot/boot_outer_shareable.bin /m
 Add ```cma=256M``` to linux_boot_args in /mnt/boot/uEnv.txt
 
 ```
-linux_kernel_image=image-4.14.0-xlnx-v2018.2-zynqmp-fpga
-linux_fdt_image=devicetree-4.14.0-xlnx-v2018.2-zynqmp-fpga-ultra96.dtb
-linux_boot_args=console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait uio_pdrv_genirq.of_id=generic-uio cma=256M
+linux_kernel_image=image-4.19.0-xlnx-v2019.1-zynqmp-fpga
+linux_fdt_image=devicetree-4.19.0-xlnx-v2019.1-zynqmp-fpga-ultra96v2.dtb
+linux_boot_args=console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait uio_pdrv_genirq.of_id=generic-uio
 
 linux_img_load_cmd=fatload mmc ${sdbootdev} ${kernel_addr} ${linux_kernel_image}
 linux_fdt_load_cmd=fatload mmc ${sdbootdev} ${fdt_addr}    ${linux_fdt_image}
@@ -108,52 +108,52 @@ fragment@2/__overlay__/uio_qconv_strip: node has a reg or ranges property, but n
 ```console
 fpga@debian-fpga:~/QCONV-STRIP-Ultra96$ rake unit_test2_all
 ./unit_test -iw 160 -ih 160 -ic 64 -oc 32 -kw 1 -kh 1 -th 1 random
-FPGA exec time (160x160x64x32 1x1): 655 [usec]
+FPGA exec time (160x160x64x32 1x1): 1296 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 160 -ih 160 -ic 32 -oc 8 -kw 3 -kh 3 -th 1 random
-FPGA exec time (160x160x32x8 3x3): 240 [usec]
+FPGA exec time (160x160x32x8 3x3): 538 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 80 -ih 80 -ic 32 -oc 16 -kw 3 -kh 3 -th 1 random
-FPGA exec time (80x80x32x16 3x3): 146 [usec]
+FPGA exec time (80x80x32x16 3x3): 168 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 40 -ih 40 -ic 64 -oc 32 -kw 3 -kh 3 -th 1 random
-FPGA exec time (40x40x64x32 3x3): 79 [usec]
+FPGA exec time (40x40x64x32 3x3): 84 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 20 -ih 20 -ic 128 -oc 64 -kw 3 -kh 3 -th 1 random
-FPGA exec time (20x20x128x64 3x3): 79 [usec]
+FPGA exec time (20x20x128x64 3x3): 71 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 10 -ih 10 -ic 256 -oc 128 -kw 3 -kh 3 -th 1 random
-FPGA exec time (10x10x256x128 3x3): 133 [usec]
+FPGA exec time (10x10x256x128 3x3): 137 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 512 -oc 128 -kw 3 -kh 3 -th 1 random
-FPGA exec time (5x5x512x128 3x3): 126 [usec]
+FPGA exec time (5x5x512x128 3x3): 183 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 128 -oc 256 -kw 3 -kh 3 -th 1 random
-FPGA exec time (5x5x128x256 3x3): 73 [usec]
+FPGA exec time (5x5x128x256 3x3): 91 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 10 -ih 10 -ic 128 -oc 32 -kw 1 -kh 1 -th 1 random
-FPGA exec time (10x10x128x32 1x1): 14 [usec]
+FPGA exec time (10x10x128x32 1x1): 13 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 20 -ih 20 -ic 64 -oc 16 -kw 1 -kh 1 -th 1 random
-FPGA exec time (20x20x64x16 1x1): 25 [usec]
+FPGA exec time (20x20x64x16 1x1): 24 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 40 -ih 40 -ic 32 -oc 4 -kw 1 -kh 1 -th 1 random
-FPGA exec time (40x40x32x4 1x1): 34 [usec]
+FPGA exec time (40x40x32x4 1x1): 35 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 1024 -oc 256 -kw 3 -kh 3 -th 1 random
-FPGA exec time (5x5x1024x256 3x3): 459 [usec]
+FPGA exec time (5x5x1024x256 3x3): 724 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 256 -oc 128 -kw 3 -kh 3 -th 1 random
-FPGA exec time (5x5x256x128 3x3): 87 [usec]
+FPGA exec time (5x5x256x128 3x3): 100 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 128 -oc 256 -kw 3 -kh 3 -th 1 random
 FPGA exec time (5x5x128x256 3x3): 94 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 256 -oc 128 -kw 3 -kh 3 -th 1 random
-FPGA exec time (5x5x256x128 3x3): 95 [usec]
+FPGA exec time (5x5x256x128 3x3): 77 [usec]
 [qconv_strip] test success!!!
 ./unit_test -iw 5 -ih 5 -ic 128 -oc 256 -kw 3 -kh 3 -th 1 random
-FPGA exec time (5x5x128x256 3x3): 80 [usec]
+FPGA exec time (5x5x128x256 3x3): 96 [usec]
 [qconv_strip] test success!!!
 ```
 
