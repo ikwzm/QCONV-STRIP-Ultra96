@@ -110,7 +110,7 @@ QconvStripEnv qconv_env("uio_qconv_strip", "udmabuf-qconv-in", "udmabuf-qconv-ou
 bool qconv_strip(unsigned k_w, unsigned k_h,
                  T_q in_data_packed[], T_out out_data[], T_q k_data_packed[], T_out th_data[],
                  unsigned in_w, unsigned in_h, unsigned in_c_by_word, 
-                 unsigned out_w, unsigned out_h, unsigned out_c, unsigned pad, unsigned use_threshold)
+                 unsigned out_w, unsigned out_h, unsigned out_c, unsigned pad, unsigned use_threshold, bool sync)
 {
   assert((k_h == 1 && k_w == 1) || (k_h == 3 && k_w == 3));
 
@@ -126,7 +126,7 @@ bool qconv_strip(unsigned k_w, unsigned k_h,
     memcpy(qconv_env.th_buf.buf, (void*)th_data, th_size*sizeof(T_out));
   }
 
-  if (qconv_env.use_acp == false) {
+  if ((qconv_env.use_acp == false) || (sync == true)) {
     qconv_env.in_buf .set_sync_offset(0);
     qconv_env.in_buf .set_sync_size(in_size*sizeof(T_q));
     qconv_env.in_buf .set_sync_dma_to_device();
@@ -140,10 +140,16 @@ bool qconv_strip(unsigned k_w, unsigned k_h,
     qconv_env.out_buf.set_sync_size(out_size*sizeof(T_out));
     qconv_env.out_buf.set_sync_dma_from_device();
 
+    auto start = std::chrono::system_clock::now();
     qconv_env.in_buf .sync_for_device();
     qconv_env.k_buf  .sync_for_device();
     qconv_env.th_buf .sync_for_device();
     qconv_env.out_buf.sync_for_device();
+    auto end = std::chrono::system_clock::now();
+    auto diff = end - start;
+    std::cout << "Cache sync for device time : "
+            << std::chrono::duration_cast<std::chrono::microseconds>(diff).count() << " [usec]"
+            << std::endl;
   }
 
   auto start = std::chrono::system_clock::now();
@@ -154,11 +160,16 @@ bool qconv_strip(unsigned k_w, unsigned k_h,
                                in_w, in_h, in_c_by_word, out_w, out_h, out_c, k_w, k_h, pad, use_threshold);
   auto end = std::chrono::system_clock::now();
 
-  if (qconv_env.use_acp == false) {
+  if ((qconv_env.use_acp == false) || (sync == true)) {
+    auto start = std::chrono::system_clock::now();
     qconv_env.in_buf .sync_for_cpu();
     qconv_env.k_buf  .sync_for_cpu();
     qconv_env.th_buf .sync_for_cpu();
     qconv_env.out_buf.sync_for_cpu();
+    auto diff = end - start;
+    std::cout << "Cache sync for cpu time : "
+            << std::chrono::duration_cast<std::chrono::microseconds>(diff).count() << " [usec]"
+            << std::endl;
   }
 
   if        ((use_threshold == 0) || (use_threshold == 1)) {
@@ -184,7 +195,7 @@ bool qconv_strip(unsigned k_w, unsigned k_h,
   return status;
 }
 
-bool test_conv(input_type &in_type, unsigned k_w, unsigned k_h, unsigned in_c, unsigned in_w, unsigned in_h, unsigned out_c, unsigned use_threshold, bool verbose, bool generate_scenario)
+bool test_conv(input_type &in_type, unsigned k_w, unsigned k_h, unsigned in_c, unsigned in_w, unsigned in_h, unsigned out_c, unsigned use_threshold, bool verbose, bool generate_scenario, bool sync)
 {
   unsigned pad_w          = (k_w == 3) ? 1 : 0;
   unsigned pad_h          = (k_h == 3) ? 1 : 0;
@@ -314,7 +325,7 @@ bool test_conv(input_type &in_type, unsigned k_w, unsigned k_h, unsigned in_c, u
   }
 
   status = qconv_strip(k_w, k_h, in_data_quantized, out_data_fpga, k_data_quantized, threshold_data,
-                       in_w, in_h, in_c_by_word, out_w, out_h, out_c, pad_w, use_threshold);
+                       in_w, in_h, in_c_by_word, out_w, out_h, out_c, pad_w, use_threshold, sync);
 
   if (status == false) {
     std::cout << "qconv strip error(out_size:   " << out_size*sizeof(T_out) << "[byte])" << std::endl;
@@ -387,6 +398,7 @@ int main(int argc, char** argv) {
   parser.addArgument({"-th"  , "--use-threshold"  }, "Use Threshold <0|1> default=0" );
   parser.addArgument({"-v"   , "--verbose"        }, "Verbose Flag"          , argparse::ArgumentType::StoreTrue);
   parser.addArgument({"--generate-scenario"       }, "Generate Scenario Flag", argparse::ArgumentType::StoreTrue);
+  parser.addArgument({"--sync"                    }, "Cache Manual Sync"     , argparse::ArgumentType::StoreTrue);
 
   auto args = parser.parseArgs(argc, argv);
 
@@ -401,6 +413,7 @@ int main(int argc, char** argv) {
   unsigned int  th                = args.safeGet<unsigned int>("th",  0);
   bool          verbose           = args.has("v");
   bool          generate_scenario = args.has("generate-scenario");
+  bool          sync              = args.has("sync");
 
   if        (generate_type == "sequential") {
     in_type = SEQUENTIAL;
@@ -414,7 +427,7 @@ int main(int argc, char** argv) {
   }
 
   bool res_conv = true;
-  res_conv &= test_conv(in_type, kw, kh, ic, iw, ih, oc, th, verbose, generate_scenario);
+  res_conv &= test_conv(in_type, kw, kh, ic, iw, ih, oc, th, verbose, generate_scenario, sync);
 
   return (res_conv) ? 0 : 1;
 }
