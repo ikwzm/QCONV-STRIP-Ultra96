@@ -1,8 +1,9 @@
-TARGET                 = "qconv_strip_hpc"
+TARGET                 = "qconv_strip_acp"
 FPGA_BITSTREAM_FILE    = TARGET + ".bin"
-DEVICE_TREE_FILE       = TARGET + "_" + /^(\d+\.\d+)/.match(`uname -r`)[1] + ".dts"
+LINUX_KERNEL_RELEASE   = /^(\d+\.\d+)/.match(`uname -r`)[1]
+DEVICE_TREE_FILE       = TARGET + "_" + LINUX_KERNEL_RELEASE + ".dts"
 DEVICE_TREE_NAME       = "qconv_strip"
-DEVICE_TREE_DIRECTORY  = "/config/device-tree/overlays/#{DEVICE_TREE_NAME}"
+DEVICE_TREE_DIRECTORY  = "/config/device-tree/overlays/" + DEVICE_TREE_NAME
 UIO_DEVICE_NAMES       = ["uio_qconv_strip"]
 UDMABUF_DEVICE_NAMES   = ["udmabuf-qconv-in", "udmabuf-qconv-out", "udmabuf-qconv-k", "udmabuf-qconv-th"]
 
@@ -70,24 +71,33 @@ task :uninstall do
   sh "./dtbocfg.rb --remove #{DEVICE_TREE_NAME}"
 end
 
-desc "Prepare device drivers"
-task :prepare do
-  begin
-    sh "./dtbocfg.rb --install prepare_drivers --dts prepare_drivers.dts"
-    sh "./dtbocfg.rb --remove  prepare_drivers"
-  rescue => e
-    print "error raised:"
-    p e
-    abort
-  end
-end
-
-file "/lib/firmware/#{FPGA_BITSTREAM_FILE}" => ["#{FPGA_BITSTREAM_FILE}"] do
+file "/lib/firmware/" + FPGA_BITSTREAM_FILE => [ FPGA_BITSTREAM_FILE ] do
   sh "cp #{FPGA_BITSTREAM_FILE} /lib/firmware/#{FPGA_BITSTREAM_FILE}"
 end
 
 directory DEVICE_TREE_DIRECTORY do
   Rake::Task["install"].invoke
+end
+
+file DEVICE_TREE_FILE => [ "qconv_strip.dts" ] do
+  linux_release_number = 0
+  /(\d+)\.(\d+)/.match(LINUX_KERNEL_RELEASE)[1..2].each do |n|
+    linux_release_number = linux_release_number*100 + n.to_i
+  end
+  if linux_release_number < 419 then
+    clk_name = "clkc"
+  else 
+    clk_name = "zynqmp_clk"
+  end
+  File.open(DEVICE_TREE_FILE, "w") do |o_file|
+    File.open("qconv_strip.dts") do |i_file|
+      i_file.each_line do |line|
+        line = line.gsub(/(^\s*firmware-name\s*=\s*)(.*);/){"#{$1}\"#{FPGA_BITSTREAM_FILE}\";"}
+        line = line.gsub(/&zynqmp_clk/, "&#{clk_name}")
+        o_file.puts(line)
+      end
+    end
+  end
 end
 
 file "qconv_data_generator" => ["src/util/qconv_data_generator.cpp"] do
