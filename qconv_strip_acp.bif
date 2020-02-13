@@ -1,0 +1,4 @@
+all:
+{
+	[destination_device = pl] qconv_strip_acp.bit
+}
