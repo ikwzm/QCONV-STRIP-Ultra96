@@ -5,11 +5,11 @@
 - Library:
     Name     :  pipework
     Format   :  "add_vhdl_file sources_1 #{library_name} #{file_name}"
-    PathList :  ["../../qconv-strip-vhdl/PipeWork/src/"]
+    PathList :  ["../qconv-strip-vhdl/PipeWork/src/"]
     Use      :  ["SDPRAM(XILINX_ULTRASCALE_AUTO_SELECT)"]
 
 - Library:
     Name     :  qconv
     Format   :  "add_vhdl_file sources_1 #{library_name} #{file_name}"
-    PathList :  ["../../qconv-strip-vhdl/src/main/vhdl/"]
+    PathList :  ["../qconv-strip-vhdl/src/main/vhdl/"]
     Top      :  ["QCONV_STRIP_AXI_ULTRASCALE"]
