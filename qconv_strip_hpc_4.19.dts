@@ -3,7 +3,7 @@
 	fragment@0 {
 		target-path = "/fpga-full";
 		__overlay__ {
-			firmware-name = "qconv_strip_axi.bin";
+			firmware-name = "qconv_strip_hpc.bin";
 		};
         };
 	fragment@1 {
