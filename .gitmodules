@@ -1,3 +1,6 @@
 [submodule "qconv-strip-vhdl"]
 	path = qconv-strip-vhdl
 	url = https://github.com/ikwzm/qconv-strip-vhdl.git
+[submodule "ZynqMP-ACP-Adapter"]
+	path = ZynqMP-ACP-Adapter
+	url = https://github.com/ikwzm/ZynqMP-ACP-Adapter
