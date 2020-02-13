@@ -1,12 +1,13 @@
-
-CC                     = "g++"
-CFLAGS                 = "-I ./include -Wpointer-arith"
-FPGA_BITSTREAM_FILE    = "qconv_strip_axi.bin"
-DEVICE_TREE_FILE       = "qconv_strip_" + /^(\d+\.\d+)/.match(`uname -r`)[1] + ".dts"
+TARGET                 = "qconv_strip_hpc"
+FPGA_BITSTREAM_FILE    = TARGET + ".bin"
+DEVICE_TREE_FILE       = TARGET + "_" + /^(\d+\.\d+)/.match(`uname -r`)[1] + ".dts"
 DEVICE_TREE_NAME       = "qconv_strip"
 DEVICE_TREE_DIRECTORY  = "/config/device-tree/overlays/#{DEVICE_TREE_NAME}"
 UIO_DEVICE_NAMES       = ["uio_qconv_strip"]
 UDMABUF_DEVICE_NAMES   = ["udmabuf-qconv-in", "udmabuf-qconv-out", "udmabuf-qconv-k", "udmabuf-qconv-th"]
+
+CC                     = "g++"
+CFLAGS                 = "-I ./include -Wpointer-arith"
 
 def find_uio_device(name)
   found_device_name = nil

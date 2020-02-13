@@ -5,9 +5,14 @@
 set project_directory       [file dirname [info script]]
 set project_name            "project"
 set board_part              [get_board_parts -quiet -latest_file_version "*ultra96v1*"]
-set design_bd_tcl_file      [file join $project_directory "design_1_bd.tcl"  ]
 lappend constrs_file_list   [file join $project_directory "design_1_pin.xdc" ]
 lappend ip_repo_path_list   [file join $project_directory ".." "ip"]
+if       { [string first "2018.3" [version -short]] == 0 } {
+    set design_bd_tcl_file      [file join $project_directory "design_1_bd_2018.3.tcl"  ]
+} elseif { [string first "2019.1" [version -short]] == 0 } {
+    set design_bd_tcl_file      [file join $project_directory "design_1_bd_2019.1.tcl"  ]
+} else {
+}
 #
 # Create project
 #
