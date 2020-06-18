@@ -1,6 +1,6 @@
 /*********************************************************************************
  *
- *       Copyright (C) 2019 Ichiro Kawazome
+ *       Copyright (C) 2019,2020 Ichiro Kawazome
  *       All rights reserved.
  * 
  *       Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <errno.h>
@@ -52,15 +53,38 @@ private:
   int           _sys_sync_for_dev_file;
   std::string   _sys_path;
 
+  bool set_sys_path(const std::string& _name)
+  {
+    char        file_name[1024];
+    struct stat st;
+
+    sprintf(file_name, "/sys/class/u-dma-buf/%s", name.c_str());
+    if (stat(file_name, &st) == 0) {
+        _sys_path = "/sys/class/u-dma-buf/" + name;
+        return true;
+    }
+    sprintf(file_name, "/sys/class/udmabuf/%s"  , name.c_str());
+    if (stat(file_name, &st) == 0) {
+        _sys_path = "/sys/class/udmabuf/"   + name;
+        return true;
+    }
+    return false;
+  }
+  
 public:
   bool initialize(const std::string& device_name)
   {
-    char      file_name[1024];
-    int       fd;
-    char      attr[1024];
-    bool      _status = true;
-    name      = device_name;
-    _sys_path = "/sys/class/udmabuf/" + name;
+    char        file_name[1024];
+    int         fd;
+    char        attr[1024];
+    bool        _status = true;
+
+    name = device_name;
+
+    if ((_status = set_sys_path(device_name)) == false) {
+      printf("Can not found %s in /sys/class/u-dma-buf/ or /sys/class/udmabuf/\n", name.c_str());
+      goto done;
+    }
     
     sprintf(file_name, "%s/phys_addr", _sys_path.c_str());
     if ((fd  = open(file_name, O_RDONLY)) < 0) {
