@@ -40,25 +40,25 @@
 	                };
 
 			udmabuf_qconv_in {
-				compatible  = "ikwzm,udmabuf-0.10.a";
+				compatible  = "ikwzm,u-dma-buf";
 				device-name = "udmabuf-qconv-in";
 				size = <0x00400000>;
 	                };
 
 			udmabuf_qconv_out {
-				compatible = "ikwzm,udmabuf-0.10.a";
+				compatible = "ikwzm,u-dma-buf";
 				device-name = "udmabuf-qconv-out";
 				size = <0x00800000>;
 			};
 			
 			udmabuf_qconv_k {
-				compatible = "ikwzm,udmabuf-0.10.a";
+				compatible = "ikwzm,u-dma-buf";
 				device-name = "udmabuf-qconv-k";
 				size = <0x00400000>;
 			};
 
 			udmabuf_qconv_th {
-				compatible = "ikwzm,udmabuf-0.10.a";
+				compatible = "ikwzm,u-dma-buf";
 				device-name = "udmabuf-qconv-th";
 				size = <0x0010000>;
 			};

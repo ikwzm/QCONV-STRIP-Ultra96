@@ -100,6 +100,9 @@ file DEVICE_TREE_FILE => [ "qconv_strip.dts" ] do
       i_file.each_line do |line|
         line = line.gsub(/(^\s*firmware-name\s*=\s*)(.*);/){"#{$1}\"#{FPGA_BITSTREAM_FILE}\";"}
         line = line.gsub(/&zynqmp_clk/, "&#{clk_name}")
+        if linux_release_number < 500 then
+          line = line.gsub(/(^\s*compatible\s*=\s*)("ikwzm,u-dma-buf");/){"#{$1}\"ikwzm,udmabuf-0.10.a\";"};
+        end
         o_file.puts(line)
       end
     end
